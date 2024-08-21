@@ -1,105 +1,35 @@
 #ifndef VEC3_H
 #define VEC3_H
 
-#include <cmath>
-#include <iostream>
+#include <math.h>
+#include <stdio.h>
 
-class vec3 {
-public:
+typedef struct {
     double e[3];
+} vec3;
 
-    vec3() : e{0,0,0} {}
-    vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
+// Define point3 as an alias for vec3
+typedef vec3 point3;
 
-    double x() const { return e[0]; }
-    double y() const { return e[1]; }
-    double z() const { return e[2]; }
+vec3 vec3_create(double e0, double e1, double e2);
+void vec3_set(vec3* v, double e0, double e1, double e2);
+double vec3_x(const vec3* v);
+double vec3_y(const vec3* v);
+double vec3_z(const vec3* v);
 
-    vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
+vec3 vec3_negate(const vec3* v);
+vec3 vec3_add_vec(const vec3* u, const vec3* v);
+vec3 vec3_subtract_vec(const vec3* u, const vec3* v );
+vec3 vec3_multiply_vec(const vec3* u, const vec3* v);
 
-    /*
-    In C++, overloading the operator[] allows you to define how the array subscript operator ([]) behaves for instances of your class. The operator[] can be overloaded in two different ways:
-    one that returns a const reference - allows reading + modifying
-    and one that returns a non-const reference - read-only access
-    */
+vec3 vec3_multiply_scalar(const vec3* v, double t);
+vec3 vec3_divide_scalar(const vec3* v, double t);
 
-    double operator[](int i) const { return e[i]; }
-    double& operator[](int i) { return e[i]; }
-
-    vec3& operator+=(const vec3& v) {
-        e[0] += v.e[0];
-        e[1] += v.e[1];
-        e[2] += v.e[2];
-        return *this;
-    }
-
-    vec3& operator*=(double t) {
-        e[0] *= t;
-        e[1] *= t;
-        e[2] *= t;
-        return *this;
-    }
-
-    vec3& operator/=(double t) {
-        return *this *= 1/t;
-    }
-
-    double length() const {
-        return std::sqrt(length_squared());
-    }
-
-    double length_squared() const {
-        return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
-    }
-};
-
-// point3 is just an alias for vec3, but useful for geometric clarity in the code.
-using point3 = vec3;
-
-// Vector Utility Functions
-
-inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
-    return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
-}
-
-inline vec3 operator+(const vec3& u, const vec3& v) {
-    return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
-}
-
-inline vec3 operator-(const vec3& u, const vec3& v) {
-    return vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
-}
-
-inline vec3 operator*(const vec3& u, const vec3& v) {
-    return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
-}
-
-inline vec3 operator*(double t, const vec3& v) {
-    return vec3(t*v.e[0], t*v.e[1], t*v.e[2]);
-}
-
-inline vec3 operator*(const vec3& v, double t) {
-    return t * v;
-}
-
-inline vec3 operator/(const vec3& v, double t) {
-    return (1/t) * v;
-}
-
-inline double dot(const vec3& u, const vec3& v) {
-    return u.e[0] * v.e[0]
-         + u.e[1] * v.e[1]
-         + u.e[2] * v.e[2];
-}
-
-inline vec3 cross(const vec3& u, const vec3& v) {
-    return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-                u.e[2] * v.e[0] - u.e[0] * v.e[2],
-                u.e[0] * v.e[1] - u.e[1] * v.e[0]);
-}
-
-inline vec3 unit_vector(const vec3& v) {
-    return v / v.length();
-}
+double vec3_length(const vec3* v);
+double vec3_length_squared(const vec3* v);
+double vec3_dot(const vec3* u, const vec3* v);
+vec3 vec3_cross(const vec3* u, const vec3* v);
+vec3 vec3_unit_vector(const vec3* v);
+void vec3_print(const vec3* v);
 
 #endif
