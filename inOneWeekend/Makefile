@@ -1,3 +1,6 @@
+TIMESTAMP := $(shell date +%Y%m%d_%H%M%S)
+OUTPUT_IMAGE = test_image_$(TIMESTAMP).png
+
 # Define the compiler and flags
 CC = gcc
 CFLAGS = -Wall -I./include
@@ -9,9 +12,6 @@ OBJ = $(SRC:.c=.o)
 
 # Define the target executable
 TARGET = main
-
-# Define the output image file
-OUTPUT_IMAGE = test_image.png
 
 # Target to build the executable
 all: $(TARGET) $(OUTPUT_IMAGE)
@@ -39,10 +39,12 @@ color.o: color.c color.h vec3.h
 # Rule to generate the image file by running the executable
 $(OUTPUT_IMAGE): $(TARGET)
 	@echo "Running the executable..."
-	@./$(TARGET)
+	@OUTPUT_IMAGE=$(OUTPUT_IMAGE) ./$(TARGET)
 	@echo "Checking if image file is created..."
 	@ls -l $(OUTPUT_IMAGE)
 
 # Clean up the generated files
 clean:
-	rm -f $(TARGET) $(OBJ) $(OUTPUT_IMAGE)
+	rm -f $(TARGET) $(OBJ) test_image_*.png
+
+.PHONY: all clean

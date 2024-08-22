@@ -12,19 +12,18 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "lib/stb_image_write.h"
 
-
 double hit_sphere(const point3* center, double radius, const ray* r) {
-    vec3 oc = vec3_subtract_vec(center, ray_origin(r));
+    vec3 oc = vec3_subtract_vec(center, &r->orig);
 
-    double a = vec3_dot(ray_direction(r), ray_direction(r));
-    double b = -2.0 * vec3_dot(ray_direction(r), &oc);
-    double c = vec3_dot(&oc, &oc) - (radius * radius);
-    double discriminant = b * b - 4.0 * a * c;
+    double a = vec3_length_squared(&r->dir);
+    double h = vec3_dot(&r->dir, &oc);
+    double c = vec3_length_squared(&oc) - (radius * radius);
+    double discriminant = h * h - a * c;
 
     if (discriminant < 0) {
         return -1.0;
     } else {
-        return (-b - sqrt(discriminant)) / (2.0 * a);
+        return (h - sqrt(discriminant)) / a;
     }
 }
 
@@ -44,7 +43,7 @@ color ray_color(const ray* r) {
         return res;
     }
 
-    vec3 unit_direction = vec3_unit_vector(ray_direction(r));
+    vec3 unit_direction = vec3_unit_vector(&r->dir);
     double a = 0.5 * (vec3_y(&unit_direction) + 1.0);
 
     color white = vec3_create(1.0, 1.0, 1.0);
@@ -129,8 +128,13 @@ int main() {
          }
      }
 
+     char *filename = getenv("OUTPUT_IMAGE");
+     if (filename == NULL) {
+         filename = "default_output.png";
+     }
+
      // Write the image to a file using stb_image_write
-     if (!stbi_write_png("test_image.png", image_width, image_height, 3, image_data, image_width * 3)) {
+     if (!stbi_write_png(filename, image_width, image_height, 3, image_data, image_width * 3)) {
          fprintf(stderr, "Error: Failed to write image\n");
          free(image_data);
          return 1;
