@@ -4,32 +4,42 @@
 #include <math.h>
 #include <stdio.h>
 
+// Type definitions
 typedef struct {
-    double e[3];
+    double x, y, z;
 } vec3;
 
-// Define point3 as an alias for vec3
 typedef vec3 point3;
 
-vec3 vec3_create(double e0, double e1, double e2);
-void vec3_set(vec3* v, double e0, double e1, double e2);
-double vec3_x(const vec3* v);
-double vec3_y(const vec3* v);
-double vec3_z(const vec3* v);
+// Constructor
+vec3 vec3_create(double x, double y, double z);
 
+// Accessors
+#define vec3_x(v) ((v)->x)
+#define vec3_y(v) ((v)->y)
+#define vec3_z(v) ((v)->z)
+
+// Mutator
+void vec3_set(vec3* v, double x, double y, double z);
+
+// Unary operations
 vec3 vec3_negate(const vec3* v);
-vec3 vec3_add_vec(const vec3* u, const vec3* v);
-vec3 vec3_subtract_vec(const vec3* u, const vec3* v );
-vec3 vec3_multiply_vec(const vec3* u, const vec3* v);
-
-vec3 vec3_multiply_scalar(const vec3* v, double t);
-vec3 vec3_divide_scalar(const vec3* v, double t);
-
 double vec3_length(const vec3* v);
 double vec3_length_squared(const vec3* v);
+vec3 vec3_unit_vector(const vec3* v);
+
+// Binary operations
+vec3 vec3_add(const vec3* u, const vec3* v);
+vec3 vec3_subtract(const vec3* u, const vec3* v);
+vec3 vec3_multiply(const vec3* u, const vec3* v);
+vec3 vec3_scale(const vec3* v, double t);
+vec3 vec3_divide(const vec3* v, double t);
+
+// Products
 double vec3_dot(const vec3* u, const vec3* v);
 vec3 vec3_cross(const vec3* u, const vec3* v);
-vec3 vec3_unit_vector(const vec3* v);
+
+// Utility
 void vec3_print(const vec3* v);
 
-#endif
+#endif // VEC3_H

@@ -10,6 +10,6 @@ ray ray_create(const point3* origin, const vec3* direction) {
 
 // Function to get the point at parameter t along the ray
 point3 ray_at(const ray* r, double t) {
-    vec3 scaled_dir = vec3_multiply_scalar(&r->dir, t);
-    return (point3)vec3_add_vec(&r->orig, &scaled_dir);
+    vec3 scaled_dir = vec3_scale(&r->dir, t);
+    return (point3)vec3_add(&r->orig, &scaled_dir);
 }

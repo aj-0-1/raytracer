@@ -13,7 +13,7 @@
 #include "lib/stb_image_write.h"
 
 double hit_sphere(const point3* center, double radius, const ray* r) {
-    vec3 oc = vec3_subtract_vec(center, &r->orig);
+    vec3 oc = vec3_subtract(center, &r->orig);
 
     double a = vec3_length_squared(&r->dir);
     double h = vec3_dot(&r->dir, &oc);
@@ -35,11 +35,11 @@ color ray_color(const ray* r) {
     if (t > 0.0) {
         printf("Hit detected at t = %f\n", t);
         vec3 hit_point = ray_at(r, t);
-        vec3 n = vec3_subtract_vec(&hit_point, &center);
+        vec3 n = vec3_subtract(&hit_point, &center);
         vec3 N = vec3_unit_vector(&n);
 
         vec3 vec_plus_one = vec3_create(vec3_x(&N) + 1.0, vec3_y(&N) + 1.0, vec3_z(&N) + 1.0);
-        color res = vec3_multiply_scalar(&vec_plus_one, 0.5);
+        color res = vec3_scale(&vec_plus_one, 0.5);
         return res;
     }
 
@@ -49,10 +49,10 @@ color ray_color(const ray* r) {
     color white = vec3_create(1.0, 1.0, 1.0);
     color blue = vec3_create(0.5, 0.7, 1.0);
 
-    color result = vec3_multiply_scalar(&white,1.0 - a);
-    color temp = vec3_multiply_scalar(&blue, a);
+    color result = vec3_scale(&white,1.0 - a);
+    color temp = vec3_scale(&blue, a);
 
-    return vec3_add_vec(&result, &temp);
+    return vec3_add(&result, &temp);
 }
 
 int main() {
@@ -77,23 +77,23 @@ int main() {
     vec3 viewport_v = vec3_create(0, -viewport_height, 0);
 
     // Calculate the horizontal and vertical delta vectors from pixel to pixel.
-    vec3 pixel_delta_u = vec3_divide_scalar(&viewport_u, (double)image_width);
-    vec3 pixel_delta_v = vec3_divide_scalar(&viewport_v,(double)image_height);
+    vec3 pixel_delta_u = vec3_divide(&viewport_u, (double)image_width);
+    vec3 pixel_delta_v = vec3_divide(&viewport_v,(double)image_height);
 
     // Calculate the location of the upper left pixel.
     // viewport_upper_left = camera_center - vec3(0, 0, focal_length) - viewport_u/2 - viewport_v/2;
     vec3 focal_length_vec = vec3_create(0, 0, focal_length);
 
-    vec3 viewport_u_1_2 = vec3_divide_scalar(&viewport_u, 2);
-    vec3 viewport_v_1_2 = vec3_divide_scalar(&viewport_v, 2);
+    vec3 viewport_u_1_2 = vec3_divide(&viewport_u, 2);
+    vec3 viewport_v_1_2 = vec3_divide(&viewport_v, 2);
 
-    vec3 viewport_upper_left = vec3_subtract_vec(&camera_center, &focal_length_vec);
-    viewport_upper_left = vec3_subtract_vec(&viewport_upper_left, &viewport_u_1_2);
-    viewport_upper_left = vec3_subtract_vec(&viewport_upper_left, &viewport_v_1_2);
+    vec3 viewport_upper_left = vec3_subtract(&camera_center, &focal_length_vec);
+    viewport_upper_left = vec3_subtract(&viewport_upper_left, &viewport_u_1_2);
+    viewport_upper_left = vec3_subtract(&viewport_upper_left, &viewport_v_1_2);
 
-    vec3 pixel_delta_u_sum_v = vec3_add_vec(&pixel_delta_u, &pixel_delta_v);
-    vec3 tmp1 = vec3_multiply_scalar(&pixel_delta_u_sum_v, 0.5);
-    vec3 pixel00_loc = vec3_add_vec(&tmp1, &viewport_upper_left);
+    vec3 pixel_delta_u_sum_v = vec3_add(&pixel_delta_u, &pixel_delta_v);
+    vec3 tmp1 = vec3_scale(&pixel_delta_u_sum_v, 0.5);
+    vec3 pixel00_loc = vec3_add(&tmp1, &viewport_upper_left);
 
     // Allocate buffer for pixel data (3 channels for RGB)
     uint8_t *image_data = (uint8_t*)malloc(image_width * image_height * 3);
@@ -110,12 +110,12 @@ int main() {
              vec3 pixel_center;
              vec3 temp_u, temp_v;
 
-             temp_u = vec3_multiply_scalar(&pixel_delta_u, i);
-             temp_v = vec3_multiply_scalar(&pixel_delta_v, j);
-             pixel_center = vec3_add_vec(&pixel00_loc, &temp_u);
-             pixel_center = vec3_add_vec(&pixel_center, &temp_v);
+             temp_u = vec3_scale(&pixel_delta_u, i);
+             temp_v = vec3_scale(&pixel_delta_v, j);
+             pixel_center = vec3_add(&pixel00_loc, &temp_u);
+             pixel_center = vec3_add(&pixel_center, &temp_v);
 
-             vec3 ray_direction = vec3_subtract_vec(&pixel_center, &camera_center);
+             vec3 ray_direction = vec3_subtract(&pixel_center, &camera_center);
              ray r = ray_create(&camera_center, &ray_direction);
 
              // Get pixel color using your ray tracing function
