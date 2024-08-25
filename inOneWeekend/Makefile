@@ -3,11 +3,12 @@ OUTPUT_IMAGE = test_image_$(TIMESTAMP).png
 
 # Define the compiler and flags
 CC = gcc
-CFLAGS = -Wall -I./include
+FORMAT = clang-format
+STYLE = -style=Google -extra-credits=false
 LDFLAGS = -lm
 
 # Define the source and object files
-SRC = main.c ray.c vec3.c color.c
+SRC = main.c ray.c vec3.c color.c hittable.c sphere.c hittable_list.c
 OBJ = $(SRC:.c=.o)
 
 # Define the target executable
@@ -15,26 +16,26 @@ TARGET = main
 
 # Target to build the executable
 all: $(TARGET) $(OUTPUT_IMAGE)
+format:
+	@$(FORMAT) -i main.c ray.c vec3.c color.c hittable.c sphere.c hittable_list.c \
+				ray.h vec3.h color.h hittable.h sphere.h hittable_list.h
 
 # Rule to build the executable
 $(TARGET): $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-# Rule to compile the main.c file
-main.o: main.c ray.h vec3.h color.h
-	$(CC) $(CFLAGS) -c main.c
+# Generic rule for object files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Rule to compile the ray.c file
+# Dependencies
+main.o: main.c ray.h vec3.h color.h hittable.h sphere.h hittable_list.h
 ray.o: ray.c ray.h vec3.h
-	$(CC) $(CFLAGS) -c ray.c
-
-# Rule to compile the vec3.c file
 vec3.o: vec3.c vec3.h
-	$(CC) $(CFLAGS) -c vec3.c
-
-# Rule to compile the color.c file
 color.o: color.c color.h vec3.h
-	$(CC) $(CFLAGS) -c color.c
+hittable.o: hittable.c hittable.h ray.h vec3.h
+sphere.o: sphere.c sphere.h hittable.h vec3.h
+hittable_list.o: hittable_list.c hittable_list.h hittable.h
 
 # Rule to generate the image file by running the executable
 $(OUTPUT_IMAGE): $(TARGET)
@@ -47,4 +48,4 @@ $(OUTPUT_IMAGE): $(TARGET)
 clean:
 	rm -f $(TARGET) $(OBJ) test_image_*.png
 
-.PHONY: all clean
+.PHONY: all clean format
