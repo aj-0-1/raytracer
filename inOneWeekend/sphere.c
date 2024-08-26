@@ -1,8 +1,9 @@
 #include "sphere.h"
+#include "interval.h"
 #include <math.h>
 #include <stdlib.h>
 
-bool sphere_hit(const hittable *obj, const ray *r, double t_min, double t_max,
+bool sphere_hit(const hittable *obj, const ray *r, interval ray_t,
                 hit_record *rec) {
   const sphere_data *s = (const sphere_data *)obj->data;
   vec3 oc = vec3_subtract(&r->orig, &s->center);
@@ -11,15 +12,16 @@ bool sphere_hit(const hittable *obj, const ray *r, double t_min, double t_max,
   double c = vec3_length_squared(&oc) - s->radius * s->radius;
 
   double discriminant = half_b * half_b - a * c;
-  if (discriminant < 0)
+  if (discriminant < 0) {
     return false;
+  }
   double sqrtd = sqrt(discriminant);
 
   // Find the nearest root that lies in the acceptable range.
   double root = (-half_b - sqrtd) / a;
-  if (root < t_min || t_max < root) {
+  if (!interval_surrounds(&ray_t, root)) {
     root = (-half_b + sqrtd) / a;
-    if (root < t_min || t_max < root)
+    if (!interval_surrounds(&ray_t, root))
       return false;
   }
 

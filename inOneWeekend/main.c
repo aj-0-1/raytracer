@@ -1,5 +1,6 @@
 #include "hittable.h"
 #include "hittable_list.h"
+#include "interval.h"
 #include "rtweekend.h"
 #include "sphere.h"
 #include <math.h>
@@ -13,7 +14,8 @@
 
 color ray_color(const ray *r, const hittable_list *world) {
   hit_record rec;
-  if (hittable_list_hit(world, r, 0, INFINITY, &rec)) {
+  interval i = {0, INFINITY};
+  if (hittable_list_hit(world, r, i, &rec)) {
     vec3 tmp1 = vec3_create(1, 1, 1);
     vec3 tmp2 = vec3_add(&rec.normal, &tmp1);
     return vec3_scale(&tmp2, 0.5);

@@ -53,15 +53,15 @@ bool hittable_list_add(hittable_list *list, hittable *object) {
   return true;
 }
 
-bool hittable_list_hit(const hittable_list *list, const ray *r, double ray_tmin,
-                       double ray_tmax, hit_record *rec) {
+bool hittable_list_hit(const hittable_list *list, const ray *r, interval ray_t,
+                       hit_record *rec) {
   hit_record temp_rec;
   bool hit_anything = false;
-  double closest_so_far = ray_tmax;
+  double closest_so_far = ray_t.max;
 
   for (size_t i = 0; i < list->size; i++) {
-    if (list->objects[i]->hit(list->objects[i], r, ray_tmin, closest_so_far,
-                              &temp_rec)) {
+    interval temp_t = interval_create(ray_t.min, closest_so_far);
+    if (list->objects[i]->hit(list->objects[i], r, temp_t, &temp_rec)) {
       hit_anything = true;
       closest_so_far = temp_rec.t;
       *rec = temp_rec;
