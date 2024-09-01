@@ -41,8 +41,7 @@ void hittable_list_clear(hittable_list *list) {
 bool hittable_list_add(hittable_list *list, hittable *object) {
   if (list->size == list->capacity) {
     size_t new_capacity = list->capacity * 2;
-    hittable **new_objects =
-        realloc(list->objects, new_capacity * sizeof(hittable *));
+    hittable **new_objects = realloc(list->objects, new_capacity * sizeof(hittable *));
     if (!new_objects) {
       return false;
     }
@@ -53,8 +52,7 @@ bool hittable_list_add(hittable_list *list, hittable *object) {
   return true;
 }
 
-bool hittable_list_hit(const hittable_list *list, const ray *r, interval ray_t,
-                       hit_record *rec) {
+bool hittable_list_hit(const hittable_list *list, const ray *r, interval ray_t, hit_record *rec) {
   hit_record temp_rec;
   bool hit_anything = false;
   double closest_so_far = ray_t.max;

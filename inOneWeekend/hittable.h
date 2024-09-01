@@ -16,8 +16,7 @@ void set_face_normal(hit_record *hr, const ray *r, const vec3 *outward_normal);
 typedef struct hittable hittable;
 
 struct hittable {
-  bool (*hit)(const hittable *self, const ray *r, interval ray_t,
-              hit_record *rec);
+  bool (*hit)(const hittable *self, const ray *r, interval ray_t, hit_record *rec);
   void (*destroy)(hittable *self);
   void *data;
 };

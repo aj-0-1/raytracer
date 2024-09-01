@@ -3,8 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-bool sphere_hit(const hittable *obj, const ray *r, interval ray_t,
-                hit_record *rec) {
+bool sphere_hit(const hittable *obj, const ray *r, interval ray_t, hit_record *rec) {
   const sphere_data *s = (const sphere_data *)obj->data;
   vec3 oc = vec3_subtract(&r->orig, &s->center);
   double a = vec3_length_squared(&r->dir);
