@@ -1,9 +1,8 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include "interval.h"
 #include "ray.h"
-#include "vec3.h"
-#include <stdbool.h>
 
 typedef struct {
   point3 p;
@@ -17,10 +16,9 @@ void set_face_normal(hit_record *hr, const ray *r, const vec3 *outward_normal);
 typedef struct hittable hittable;
 
 struct hittable {
-  bool (*hit)(const hittable *self, const ray *r, double t_min, double t_max,
-              hit_record *rec);
+  bool (*hit)(const hittable *self, const ray *r, interval ray_t, hit_record *rec);
   void (*destroy)(hittable *self);
-  void *data; // Pointer to specific shape data
+  void *data;
 };
 
 #endif

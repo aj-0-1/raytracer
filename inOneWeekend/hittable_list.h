@@ -2,7 +2,6 @@
 #define HITTABLE_LIST_H
 
 #include "hittable.h"
-#include <stdbool.h>
 
 typedef struct {
   hittable **objects;
@@ -12,9 +11,7 @@ typedef struct {
 
 hittable_list *hittable_list_create();
 void hittable_list_destroy(hittable_list *list);
-void hittable_list_clear(hittable_list *list);
 bool hittable_list_add(hittable_list *list, hittable *object);
-bool hittable_list_hit(const hittable_list *list, const ray *r, double ray_tmin,
-                       double ray_tmax, hit_record *rec);
+bool hittable_list_hit(const hittable_list *list, const ray *r, interval ray_t, hit_record *rec);
 
 #endif
