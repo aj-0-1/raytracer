@@ -1,4 +1,5 @@
 #include "color.h"
+#include "interval.h"
 
 // Function to write the color to the output stream
 void write_color(FILE *out, const color *pixel_color) {
@@ -8,9 +9,10 @@ void write_color(FILE *out, const color *pixel_color) {
   double b = vec3_z(pixel_color);
 
   // Translate the [0,1] component values to the byte range [0,255].
-  int rbyte = (int)(255.999 * r);
-  int gbyte = (int)(255.999 * g);
-  int bbyte = (int)(255.999 * b);
+  const interval intensity = {0.000, 0.999};
+  int rbyte = (int)(256 * interval_clamp(&intensity, r));
+  int gbyte = (int)(256 * interval_clamp(&intensity, g));
+  int bbyte = (int)(256 * interval_clamp(&intensity, b));
 
   // Write out the pixel color components
   fprintf(out, "%d %d %d\n", rbyte, gbyte, bbyte);

@@ -17,6 +17,8 @@ bool interval_contains(const interval *i, double x);
 
 bool interval_surrounds(const interval *i, double x);
 
+double interval_clamp(const interval *i, double x);
+
 extern const interval interval_empty;
 extern const interval interval_universe;
 
